@@ -1,0 +1,133 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: url(img/bg-admin.png) no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.wrapper {
+    width: 420px;
+    height: 420px;
+    background: rgba(255, 255, 255, 0.29);
+    border: 2px solid rgba(255, 255, 255, .2);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    color: white;
+    border-radius: 10px;
+    padding: 30px 40px;
+}
+
+.wrapper h1 {
+    font-size: 36px;
+    text-align: center;
+}
+
+.wrapper .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 45px 0;
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    outline: none;
+    border: 2px solid rgba(254, 254, 254, 0.612);
+    border-radius: 10px;
+    font-size: 16px;
+    color: white;
+    padding: 0 10px 0px 45px;
+}
+
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 45px;
+    font-size: 1em;
+    color: white;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: .5s;
+}
+
+.input-box input:focus~label,
+.input-box input:valid~label {
+    top: -14px;
+    left:  17px;
+}
+
+.input-box .icon {
+    position: absolute;
+    left: 15px;
+    top: 14px;
+    font-size: 1.2em;
+    color: white;
+}
+
+.wrapper .btn {
+    width: 100%;
+    height: 45px;
+    background: white;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #62A4E6;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background: #62A4E6;
+    color: white;
+    transition: background 0.5s;
+}
+
+.addAdmin {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    background-color: #4CAF50; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.addAdmin:hover {
+    background-color: #45a049; 
+}
+
+p{
+    text-align: center;
+    margin-top: 20px;
+}
+p a {
+    color: white;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
+
+#message {
+    position: relative;
+    bottom: 110px;
+    right: 50px;
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Edit User</h2>
+  <form action="/users/edit/<%= user.id %>" method="POST">
+    <div class="mb-3">
+      <label>Username</label>
+      <input type="text" name="username" class="form-control" value="<%= user.username %>">
+    </div>
+    <div class="mb-3">
+      <label>Phone Number</label>
+      <input type="text" name="phone_number" class="form-control" value="<%= user.phone_number %>">
+    </div>
+    <div class="mb-3">
+      <label>Email</label>
+      <input type="email" name="email" class="form-control" value="<%= user.email %>">
+    </div>
+    <div class="mb-3">
+      <label>Balance</label>
+      <input type="balance" name="balance" class="form-control" value="<%= user.balance %>">
+    </div>
+
+    <div class="mb-3">
+      <label>Password</label>
+      <input type="text" name="password_hash" class="form-control" value="<%= user.password_hash %>">
+    </div>
+
+    <div>
+       <label>VIP Status:</label>
+  <select name="vip_status">
+    <option value="1" <%= user.vip_status == 1 ? 'selected' : '' %>>VIP1</option>
+    <option value="2" <%= user.vip_status == 2 ? 'selected' : '' %>>VIP2</option>
+    <option value="3" <%= user.vip_status == 3 ? 'selected' : '' %>>VIP3</option>
+  </select>
+    </div>
+
+    <div>
+      <label>Credit Score:</label>
+      <select name="credit_score">
+    <option value="0" <%= user.credit_score == 0 ? 'selected' : '' %>>0%</option>
+    <option value="50" <%= user.credit_score == 50 ? 'selected' : '' %>>50%</option>
+    <option value="100" <%= user.credit_score == 100 ? 'selected' : '' %>>100%</option>
+  </select>
+    <button class="btn btn-primary">Update</button>
+    <a href="/users" class="btn btn-secondary">Back</a>
+  </form>
+</div>
+</body>
+</html>

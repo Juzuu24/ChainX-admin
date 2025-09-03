@@ -1,0 +1,18 @@
+<div class="navbar">
+    <div class="logo"><img src="/source/logo.png" alt="Logo" width="70" height="70"></div>
+    <form class="search-form" action="/search" method="get"
+            onsubmit="return this.q.value.trim().length > 0;">
+        <input type="text" id="nav-search" name="q" autocomplete="off"
+                placeholder="Search users, deposits, withdrawals, settings">
+        <button type="submit" class="search-btn" aria-label="Search">
+            <i class="fas fa-search"></i> <!-- or <i class="bi bi-search"></i> -->
+        </button>
+        </form>
+
+    
+</div>
+
+<div class="mobile-navbar">
+    <span class="menu-toggle" onclick="toggleSidebar()">☰ MENU</span>
+
+</div>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('component/head') %>
+  <title><%= title %></title>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <%- include('component/nav') %>
+
+  <!-- Mobile Navbar -->
+  <div class="mobile-navbar">
+    <span class="menu-toggle" onclick="toggleSidebar()">☰ MENU</span>
+  </div>
+
+  <!-- Sidebar -->
+  <%- include('component/sidebar') %>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="page-header">
+        <h2>Deposits</h2>
+        <a href="/deposits/add" class="btn btn-primary">Add Deposit</a>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Account</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (deposits && deposits.length > 0) { %>
+                <% deposits.forEach(d => { %>
+                  <tr>
+                    <td><%= d.deposit_id %></td>
+                    <td><%= d.id %></td>
+                    <td>$<%= d.amount %></td>
+                    <td><%= d.method %></td>
+                    <td><%= d.account %></td>
+                    <td>
+                      <% if (d.created_at instanceof Date) { %>
+                        <%= d.created_at.toISOString().slice(0,19).replace('T',' ') %>
+                      <% } else { %>
+                        <%= d.created_at %>
+                      <% } %>
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <a href="/deposits/edit/<%= d.deposit_id %>" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="/deposits/delete/<%= d.deposit_id %>" 
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure you want to delete this deposit?')">Delete</a>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="7" class="text-center py-4">No deposits found</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+
+    // Sidebar Toggle
+        function toggleSidebar() {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        }
+
+    
+  </script>
+</body>
+</html>

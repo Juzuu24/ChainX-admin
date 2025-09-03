@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('component/head') %>
+  <title><%= title %></title>
+</head>
+<body>
+  <%- include('component/nav') %>
+
+  <div class="main-container">
+    <%- include('component/sidebar') %>
+
+    <div class="content">
+      <h2 class="mb-3">Search results for “<%= q %>”</h2>
+
+      <!-- Users -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold">Users</div>
+        <div class="card-body p-0">
+          <table class="custom-table m-0" style="width:100%">
+            <thead><tr><th>ID</th><th>Username</th><th>Phone</th><th>Email</th><th>Balance</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% if (users && users.length) { %>
+                <% users.forEach(u => { %>
+                  <tr>
+                    <td><%= u.id %></td>
+                    <td><%= u.username %></td>
+                    <td><%= u.phone_number %></td>
+                    <td><%= u.email %></td>
+                    <td>$<%= Number(u.balance).toFixed(2) %></td>
+                    <td>
+                      <div class="action-buttons">
+                        <a class="btn btn-warning btn-sm" href="/users/edit/<%= u.id %>">Edit</a>
+                        <a class="btn btn-danger btn-sm" href="/users/delete/<%= u.id %>" onclick="return confirm('Delete this user?')">Delete</a>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr><td colspan="6" class="text-center p-3">No matching users</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Deposits -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold">Deposits</div>
+        <div class="card-body p-0">
+          <table class="custom-table m-0" style="width:100%">
+            <thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Method</th><th>Account</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% if (deposits && deposits.length) { %>
+                <% deposits.forEach(d => { %>
+                  <tr>
+                    <td><%= d.deposit_id %></td>
+                    <td><%= d.username ?? d.user_id %></td>
+                    <td>$<%= Number(d.amount).toFixed(2) %></td>
+                    <td><%= d.method %></td>
+                    <td><%= d.account %></td>
+                    <td><%= (d.created_at instanceof Date) ? d.created_at.toISOString().slice(0,19).replace('T',' ') : d.created_at %></td>
+                    <td>
+                      <div class="action-buttons">
+                        <a class="btn btn-warning btn-sm" href="/deposits/edit/<%= d.deposit_id %>">Edit</a>
+                        <a class="btn btn-danger btn-sm" href="/deposits/delete/<%= d.deposit_id %>" onclick="return confirm('Delete this deposit?')">Delete</a>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr><td colspan="7" class="text-center p-3">No matching deposits</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Withdrawals -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold">Withdrawals</div>
+        <div class="card-body p-0">
+          <table class="custom-table m-0" style="width:100%">
+            <thead><tr><th>ID</th><th>User</th><th>Amount</th><th>Method</th><th>Account</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% if (withdrawals && withdrawals.length) { %>
+                <% withdrawals.forEach(w => { %>
+                  <tr>
+                    <td><%= w.withdraw_id %></td>
+                    <td><%= w.username ?? w.user_id %></td>
+                    <td>$<%= Number(w.amount).toFixed(2) %></td>
+                    <td><%= w.method %></td>
+                    <td><%= w.account %></td>
+                    <td><%= (w.created_at instanceof Date) ? w.created_at.toISOString().slice(0,19).replace('T',' ') : w.created_at %></td>
+                    <td>
+                      <div class="action-buttons">
+                        <a class="btn btn-warning btn-sm" href="/withdrawals/edit/<%= w.withdraw_id %>">Edit</a>
+                        <a class="btn btn-danger btn-sm" href="/withdrawals/delete/<%= w.withdraw_id %>" onclick="return confirm('Delete this withdrawal?')">Delete</a>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr><td colspan="7" class="text-center p-3">No matching withdrawals</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Settings -->
+      <div class="card shadow-sm mb-3">
+        <div class="card-header bg-white fw-semibold">Settings</div>
+        <div class="card-body p-0">
+          <table class="custom-table m-0" style="width:100%">
+            <thead><tr><th>ID</th><th>User</th><th>Frequency</th><th>Daily Limit</th><th>Actions</th></tr></thead>
+            <tbody>
+              <% if (settings && settings.length) { %>
+                <% settings.forEach(s => { %>
+                  <tr>
+                    <td><%= s.id %></td>
+                    <td><%= s.username %></td>
+                    <td><%= s.lucky_frequency %></td>
+                    <td><%= s.lucky_daily_limit %></td>
+                    <td>
+                      <div class="action-buttons">
+                        <a class="btn btn-warning btn-sm" href="/order/edit/<%= s.id %>">Edit</a>
+                        <form method="POST" action="/order/delete/<%= s.id %>" style="display:inline;">
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this setting?')">Delete</button>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr><td colspan="5" class="text-center p-3">No matching settings</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

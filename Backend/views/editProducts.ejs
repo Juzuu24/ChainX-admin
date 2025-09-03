@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('component/head') %>
+        <title>Edit Product</title>
+</head>
+
+<body>
+    <%- include('component/nav') %>
+
+        
+    <div class="main-container">
+        <%- include('component/sidebar') %>
+
+        <div class="content">
+            <h2 style="color: #0F3DDE; text-align: center;">Edit Product</h2>
+
+            <form action="/products/edit/<%= product.Product_ID %>" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="productId" value="<%= product.Product_ID %>">
+            
+                <div class="mb-3">
+                    <label for="categoryId" class="form-label">Change Category</label>
+                    <select class="form-control" name="Category_ID" id="categoryId" required>
+                        <% categories.forEach(category => { %>
+                            <option value="<%= category.Category_ID %>" <%= product.Category_ID === category.Category_ID ? 'selected' : '' %> >
+                                <%= category.Category_Name %>
+                            </option>
+                        <% }) %>
+                    </select>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="productName" class="form-label">Change Product Name</label>
+                    <input type="text" class="form-control" name="Product_Name" value="<%= product.Product_Name %>" required>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="productDescription" class="form-label">Change Product Description</label>
+                    <input type="text" class="form-control" name="Product_Description" id="productDescription" value="<%= product.Product_Description || '' %>" required>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="productImage" class="form-label">Change Product Image</label>
+                    <input type="file" class="form-control" name="Product_Image" id="productImage">
+                    <img src="<%= product.Product_Image %>" alt="Current Image" style="max-width: 100px; display: block; margin-top: 10px;">
+                    <input type="hidden" name="existingImage" value="<%= product.Product_Image %>">
+                </div>
+            
+                <div class="mb-3">
+                    <label for="productPrice" class="form-label">Change Product Price</label>
+                    <input type="number" class="form-control" name="Product_Price" id="productPrice" value="<%= product.Product_Price || '' %>" required>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="productPricePromotion" class="form-label">Change Product Price Promotion</label>
+                    <input type="number" class="form-control" name="Product_Price_Promotion" id="productPricePromotion" value="<%= product.Product_Price_Promotion || '' %>" required>
+                </div>
+            
+                <div class="mb-3">
+                    <label for="discount" class="form-label">Change Discount (%)</label>
+                    <input type="number" class="form-control" name="Discount" id="discount" value="<%= product.Discount || '' %>" required>
+                </div>
+            
+                <button type="submit" class="btn btn-primary">Confirm</button>
+                <a href="/products" class="btn btn-secondary">Cancel</a>
+            </form>
+            
+        </div>
+    </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+        <script>
+            function toggleSidebar() {
+                var sidebar = document.getElementById("sidebar");
+                sidebar.classList.toggle("active");
+            }
+            document.getElementById('editProductForm').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const categoryId = document.getElementById('categoryId').value;
+                const productName = document.getElementById('productName').value;
+                const productDescription = document.getElementById('productDescription').value;
+                const productImage = document.getElementById('productImage').value;
+                const productPrice = document.getElementById('productPrice').value;
+                const productPricePromotion = document.getElementById('productPricePromotion').value;
+                const discount = document.getElementById('discount').value;
+
+                fetch(`/products/edit/<%= product.Product_ID %>`, { // Replace with the correct endpoint
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        categoryId,  // Change this to the correct key
+                        productName,
+                        productDescription,
+                        productImage,
+                        productPrice,
+                        productPricePromotion,
+                        discount
+                    }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Success:', data);
+                        window.location.href = '/products';
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            });
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('component/head') %>
+  <title><%= title %></title>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <%- include('component/nav') %>
+
+  <!-- Mobile Navbar -->
+  <div class="mobile-navbar">
+    <span class="menu-toggle" onclick="toggleSidebar()">☰ MENU</span>
+  </div>
+
+  <!-- Sidebar -->
+  <%- include('component/sidebar') %>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="page-header">
+        <h2>Withdrawals</h2>
+        <a href="/withdrawals/add" class="btn btn-primary">Add Withdrawal</a>
+      </div>
+      
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Holder Name</th>
+                <th>Phone Number</th>
+                <th>Crypto ID</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (withdrawals && withdrawals.length > 0) { %>
+                <% withdrawals.forEach(w => { %>
+                  <tr>
+                    <td><%= w.withdraw_id %></td>
+                    <td><%= w.id %></td>
+                    <td>$<%= w.amount %></td>
+                    <td><%= w.method %></td>
+                    <td><%= w.holderName %></td>
+                    <td><%= w.phoneNumber %></td>
+                    <td><%= w.cryptoId %></td>
+                    <td>
+                      <% if (w.created_at instanceof Date) { %>
+                        <%= w.created_at.toISOString().slice(0,19).replace('T',' ') %>
+                      <% } else { %>
+                        <%= w.created_at %>
+                      <% } %>
+                    </td>
+                    <!-- Add this column in your <thead> -->
+
+<!-- ... -->
+
+<!-- In your <tbody> row, add: -->
+                    <td>
+                      <span style="color: blue;" class="badge badge-<%= w.status === 'pending' ? 'warning' : (w.status === 'approved' ? 'success' : 'danger') %>">
+                        <%= w.status %>
+                      </span>
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <a href="/withdrawals/edit/<%= w.withdraw_id %>" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="/withdrawals/delete/<%= w.withdraw_id %>" class="btn btn-sm btn-danger"
+                          onclick="return confirm('Are you sure you want to delete this withdrawal?')">Delete</a>
+                        <% if (w.status === 'pending') { %>
+                          <form action="/withdrawals/approve/<%= w.withdraw_id %>" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                          </form>
+                          <form action="/withdrawals/reject/<%= w.withdraw_id %>" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-secondary">Reject</button>
+                          </form>
+                        <% } %>
+                      </div>
+                    </td>
+                  </tr>
+                <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="7" class="text-center py-4">No withdrawals found</td>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar Toggle Function
+    function toggleSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("active");
+    }
+
+    
+    
+  </script>
+</body>
+</html>

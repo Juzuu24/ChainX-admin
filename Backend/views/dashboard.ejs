@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('component/head') %>
+  <title>Dashboard</title>
+  <style>
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #0F3DDE;
+      margin-bottom: 10px;
+    }
+    
+    .stat-label {
+      font-size: 1.1rem;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .stat-icon {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: #78B4F0;
+    }
+    
+    .charts-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    .chart-card {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .recent-activity {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e3f2fd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      color: #0F3DDE;
+    }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    
+    .activity-time {
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 30px;
+    }
+    
+    .action-btn {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center;
+      text-decoration: none;
+      color: #333;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .action-btn:hover {
+      border-color: #0F3DDE;
+      transform: translateY(-3px);
+      text-decoration: none;
+      color: #0F3DDE;
+    }
+    
+    .action-icon {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      color: #78B4F0;
+    }
+    
+    @media (max-width: 968px) {
+      .charts-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .quick-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <%- include('component/nav') %>
+
+  <!-- Mobile Navbar -->
+  <div class="mobile-navbar">
+    <span class="menu-toggle" onclick="toggleSidebar()">☰ MENU</span>
+  </div>
+
+  <!-- Sidebar -->
+  <%- include('component/sidebar') %>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="page-header">
+        <h2>Dashboard Overview</h2>
+        <span class="text-muted"><%= new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+      </div>
+
+      <!-- Statistics Cards -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-number"><%= typeof totalUsers !== 'undefined' ? totalUsers : 0 %></div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-money-bill-wave"></i>
+          </div>
+          <div class="stat-number">$<%= typeof totalDeposits !== 'undefined' ? totalDeposits : 0 %></div>
+          <div class="stat-label">Total Deposits</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-wallet"></i>
+          </div>
+          <div class="stat-number">$<%= typeof totalWithdrawals !== 'undefined' ? totalWithdrawals : 0 %></div>
+          <div class="stat-label">Total Withdrawals</div>
+        </div>
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-number"><%= typeof totalOrders !== 'undefined' ? totalOrders : 0 %></div>
+          <div class="stat-label">Total Orders</div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-container">
+        <div class="chart-card">
+          <h4>Recent Activity</h4>
+          <div class="recent-activity">
+            <% if (typeof recentActivities !== 'undefined' && recentActivities.length > 0) { %>
+              <% recentActivities.forEach(activity => { %>
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <i class="fas fa-<%= activity.icon || 'bell' %>"></i>
+                  </div>
+                  <div class="activity-content">
+                    <div class="activity-title"><%= activity.title %></div>
+                    <div class="activity-time"><%= activity.time %></div>
+                  </div>
+                </div>
+              <% }) %>
+            <% } else { %>
+              <div class="text-center py-4 text-muted">No recent activity</div>
+            <% } %>
+          </div>
+        </div>
+        
+        <div class="chart-card">
+          <h4>Quick Statistics</h4>
+          <div style="padding: 20px 0;">
+            <div style="margin-bottom: 15px;">
+              <strong>New Users Today:</strong> 
+              <span class="float-end"><%= typeof newUsersToday !== 'undefined' ? newUsersToday : 0 %></span>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Pending Deposits:</strong> 
+              <span class="float-end"><%= typeof pendingDeposits !== 'undefined' ? pendingDeposits : 0 %></span>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>Pending Withdrawals:</strong> 
+              <span class="float-end"><%= typeof pendingWithdrawals !== 'undefined' ? pendingWithdrawals : 0 %></span>
+            </div>
+            <div style="margin-bottom: 15px;">
+              <strong>System Status:</strong> 
+              <span class="float-end badge bg-success">Online</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <h4 class="mb-3">Quick Actions</h4>
+      <div class="quick-actions">
+        <a href="/users/add" class="action-btn">
+          <div class="action-icon">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <div>Add User</div>
+        </a>
+        
+        <a href="/deposits/add" class="action-btn">
+          <div class="action-icon">
+            <i class="fas fa-plus-circle"></i>
+          </div>
+          <div>Add Deposit</div>
+        </a>
+        
+        <a href="/withdrawals/add" class="action-btn">
+          <div class="action-icon">
+            <i class="fas fa-minus-circle"></i>
+          </div>
+          <div>Add Withdrawal</div>
+        </a>
+        
+        <a href="/order/add" class="action-btn">
+          <div class="action-icon">
+            <i class="fas fa-cog"></i>
+          </div>
+          <div>Order Settings</div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar Toggle Function
+    function toggleSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("active");
+    }
+
+    
+    
+  </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('component/head') %>
+  <title>Add New Order Setting</title>
+  <style>
+    .form-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #0F3DDE;
+      box-shadow: 0 0 0 3px rgba(15, 61, 222, 0.1);
+    }
+    
+    .form-select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      background-color: white;
+      transition: border-color 0.3s ease;
+    }
+    
+    .form-select:focus {
+      outline: none;
+      border-color: #0F3DDE;
+      box-shadow: 0 0 0 3px rgba(15, 61, 222, 0.1);
+    }
+    
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .btn-success:hover {
+      background-color: #218838;
+    }
+    
+    .btn-secondary {
+      background-color: #6c757d;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 15px;
+      transition: background-color 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background-color: #5a6268;
+      text-decoration: none;
+      color: white;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+    }
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .page-header h2 {
+      color: #0F3DDE;
+      margin-bottom: 10px;
+    }
+    
+    .help-text {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <%- include('component/nav') %>
+
+  <!-- Mobile Navbar -->
+  <div class="mobile-navbar">
+    <span class="menu-toggle" onclick="toggleSidebar()">☰ MENU</span>
+  </div>
+
+  <!-- Sidebar -->
+  <%- include('component/sidebar') %>
+
+  <!-- Main Content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="page-header">
+        <h2>Add New Order Setting</h2>
+        <p class="text-muted">Create new user order preferences and limits</p>
+      </div>
+      
+      <div class="form-container">
+        <form method="POST" action="/order/add">
+          <div class="form-group">
+            <label class="form-label">User:</label>
+            <select name="user_id" class="form-select" required>
+              <option value="">Select a user...</option>
+              <% users.forEach(user => { %>
+                <option value="<%= user.id %>">
+                  <%= user.username %> (ID: <%= user.id %>)
+                </option>
+              <% }) %>
+            </select>
+            <div class="help-text">Select the user for these order settings</div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Lucky Frequency:</label>
+            <input 
+              type="number" 
+              name="lucky_frequency" 
+              class="form-control" 
+              required
+              min="1"
+              step="1"
+              placeholder="Enter frequency number"
+              oninput="validatePositiveNumber(this)"
+            >
+            <div class="help-text">The frequency of lucky orders (must be positive)</div>
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label">Lucky Daily Limit:</label>
+            <input 
+              type="number" 
+              name="lucky_daily_limit" 
+              class="form-control" 
+              required
+              min="1"
+              step="1"
+              placeholder="Enter daily limit"
+              oninput="validatePositiveNumber(this)"
+            >
+            <div class="help-text">Maximum lucky orders per day (must be positive)</div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn-success">
+              <i class="fas fa-plus-circle"></i> Create Setting
+            </button>
+            <a href="/order" class="btn-secondary">
+              <i class="fas fa-arrow-left"></i> Back to Orders
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sidebar Toggle Function
+    function toggleSidebar() {
+      var sidebar = document.getElementById("sidebar");
+      sidebar.classList.toggle("active");
+    }
+
+    
+
+    // Form validation
+    function validatePositiveNumber(input) {
+      if (input.value < 1) {
+        input.value = 1;
+      }
+    }
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const frequency = document.querySelector('input[name="lucky_frequency"]');
+      const dailyLimit = document.querySelector('input[name="lucky_daily_limit"]');
+      const userId = document.querySelector('select[name="user_id"]');
+      
+      if (!userId.value) {
+        e.preventDefault();
+        alert('Please select a user');
+        userId.focus();
+        return false;
+      }
+      
+      if (frequency.value < 1 || dailyLimit.value < 1) {
+        e.preventDefault();
+        alert('Frequency and daily limit must be at least 1');
+        return false;
+      }
+      
+      return true;
+    });
+  </script>
+</body>
+</html>

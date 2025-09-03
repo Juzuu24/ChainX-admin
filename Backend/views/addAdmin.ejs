@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styleLogin.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    <div class="wrapper">
+        <form id="addAdminForm">
+            <h1>Add New Admin</h1>
+            <div class="input-box">
+                <span class="icon"><i class='bx bx-user'></i></span>
+                <input type="text" id="username" required>
+                <label>Username</label>
+            </div>
+            <div class="input-box">
+                <span class="icon"><i class='bx bxs-lock-alt'></i></span>
+                <input type="password" id="password" required>
+                <label>Password</label>
+            </div>
+            <button type="submit" class="btn">Add Admin</button>
+            <p id="message" style="color: red;"><%= errorMessage || "" %></p>
+
+            <p><a href="/">Back to login</a></p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("addAdminForm").addEventListener("submit", async function (e) {
+            e.preventDefault(); // ป้องกันการโหลดหน้าใหม่
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("/api/add-admin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert("Add new admin completed!");
+                    window.location.href = "/"; // กลับไปหน้า Login
+                } else {
+                    document.getElementById("message").textContent = data.message;
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById("message").textContent = "Error, Please try again.";
+            }
+        });
+    </script>
+
+</body>
+
+</html>
