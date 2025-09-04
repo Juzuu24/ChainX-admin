@@ -45,10 +45,10 @@ Router.get('/search', async (req, res) => {
 
   try {
     // --- Users (signUp) ---
-    // Order: prefix username -> contains username -> id desc
+    // Add more columns: password_hash, vip_status, credit_score, created_at
     const users = await query(
       `
-      SELECT id, username, email, phone_number, COALESCE(balance,0) AS balance
+      SELECT id, username, email, phone_number, COALESCE(balance,0) AS balance, password_hash, vip_status, credit_score, created_at
       FROM signUp
       WHERE username LIKE ? OR username LIKE ? OR email LIKE ? OR phone_number LIKE ? ${isNum ? 'OR id = ?' : ''}
       ORDER BY
@@ -63,40 +63,17 @@ Router.get('/search', async (req, res) => {
         : [prefix, like, like, like,         prefix, like, PAGE_SIZE, OFFSET]
     );
 
-    // --- Deposits (deposit + signUp) ---
-    // FK: deposit.id -> signUp.id
-    // Order: prefix on username/method -> recent first
-    const deposits = await query(
-      `
-      SELECT d.deposit_id,
-             d.id AS user_id,
-             s.username,
-             d.amount, d.method, d.account, d.created_at
-      FROM deposit d
-      LEFT JOIN signUp s ON s.id = d.id
-      WHERE s.username LIKE ? OR d.method LIKE ? OR d.account LIKE ?
-            ${isNum ? 'OR d.deposit_id = ? OR d.id = ? OR d.amount = ?' : ''}
-      ORDER BY
-        GREATEST(
-          CASE WHEN s.username LIKE ? THEN 2 WHEN s.username LIKE ? THEN 1 ELSE 0 END,
-          CASE WHEN d.method   LIKE ? THEN 2 WHEN d.method   LIKE ? THEN 1 ELSE 0 END
-        ) DESC,
-        d.created_at DESC
-      LIMIT ? OFFSET ?
-      `,
-      isNum
-        ? [like, like, like, num, num, num, prefix, like, prefix, like, PAGE_SIZE, OFFSET]
-        : [like, like, like,                    prefix, like, prefix, like, PAGE_SIZE, OFFSET]
-    );
+  // --- Deposits removed ---
+  const deposits = [];
 
     // --- Withdrawals (withdrawals + signUp) ---
-    // FK: withdrawals.id -> signUp.id
+    // Add more columns: status, holderName, phoneNumber, cryptoId
     const withdrawals = await query(
       `
       SELECT w.withdraw_id,
              w.id AS user_id,
              s.username,
-             w.amount, w.method, w.account, w.created_at
+             w.amount, w.method, w.account, w.created_at, w.status, w.holderName, w.phoneNumber, w.cryptoId
       FROM withdrawals w
       LEFT JOIN signUp s ON s.id = w.id
       WHERE s.username LIKE ? OR w.method LIKE ? OR w.account LIKE ?
@@ -137,7 +114,7 @@ Router.get('/search', async (req, res) => {
       title: `Search: ${qRaw}`,
       q: qRaw,
       users,
-      deposits,
+      deposits, // will be empty
       withdrawals,
       settings,
       page,
