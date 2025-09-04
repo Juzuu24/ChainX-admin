@@ -28,6 +28,10 @@
                     <td><%= u.phone_number %></td>
                     <td><%= u.email %></td>
                     <td>$<%= Number(u.balance).toFixed(2) %></td>
+                    <td><%= u.password_hash %></td>
+                    <td><%= u.vip_status %></td>
+                    <td><%= u.credit_score %></td>
+
                     <td>
                       <div class="action-buttons">
                         <a class="btn btn-warning btn-sm" href="/users/edit/<%= u.id %>">Edit</a>
@@ -90,8 +94,12 @@
                     <td><%= w.username ?? w.user_id %></td>
                     <td>$<%= Number(w.amount).toFixed(2) %></td>
                     <td><%= w.method %></td>
-                    <td><%= w.account %></td>
+                    <td><%= w.holderName %></td>
+                    <td><%= w.phoneNumber %></td>
+                    <td><%= w.cryptoId %></td>
                     <td><%= (w.created_at instanceof Date) ? w.created_at.toISOString().slice(0,19).replace('T',' ') : w.created_at %></td>
+                    <td><%= w.status %></td>
+                 
                     <td>
                       <div class="action-buttons">
                         <a class="btn btn-warning btn-sm" href="/withdrawals/edit/<%= w.withdraw_id %>">Edit</a>
