@@ -73,10 +73,10 @@ Router.get('/search', async (req, res) => {
       SELECT w.withdraw_id,
              w.id AS user_id,
              s.username,
-             w.amount, w.method, w.account, w.created_at, w.status, w.holderName, w.phoneNumber, w.cryptoId
+             w.amount, w.method, w.created_at, w.status, w.holderName, w.phoneNumber, w.cryptoId
       FROM withdrawals w
       LEFT JOIN signUp s ON s.id = w.id
-      WHERE s.username LIKE ? OR w.method LIKE ? OR w.account LIKE ?
+      WHERE s.username LIKE ? OR w.method LIKE ?
             ${isNum ? 'OR w.withdraw_id = ? OR w.id = ? OR w.amount = ?' : ''}
       ORDER BY
         GREATEST(
@@ -87,8 +87,8 @@ Router.get('/search', async (req, res) => {
       LIMIT ? OFFSET ?
       `,
       isNum
-        ? [like, like, like, num, num, num, prefix, like, prefix, like, PAGE_SIZE, OFFSET]
-        : [like, like, like,                    prefix, like, prefix, like, PAGE_SIZE, OFFSET]
+        ? [like, like, num, num, num, prefix, like, prefix, like, PAGE_SIZE, OFFSET]
+        : [like, like,          prefix, like, prefix, like, PAGE_SIZE, OFFSET]
     );
 
     // --- Settings (user_settings + signUp) ---
