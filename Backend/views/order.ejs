@@ -32,24 +32,26 @@
               <tr>
                 <th>ID</th>
                 <th>User</th>
-                <th>Frequency</th>
-                <th>Daily Limit</th>
+                <th>Order Number</th>
+                <th>Claimed</th>
+                <th>Created At</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <% if (settings && settings.length > 0) { %>
-                <% settings.forEach(setting => { %>
+              <% if (orders && orders.length > 0) { %>
+                <% orders.forEach(order => { %>
                   <tr>
-                    <td><%= setting.id %></td>
-                    <td><%= setting.username %></td>
-                    <td><%= setting.lucky_frequency %></td>
-                    <td><%= setting.lucky_daily_limit %></td>
+                    <td><%= order.id %></td>
+                    <td><%= order.username %></td>
+                    <td><%= order.order_number %></td>
+                    <td><%= order.is_claimed ? 'Yes' : 'No' %></td>
+                    <td><%= (order.created_at instanceof Date) ? order.created_at.toISOString().slice(0,19).replace('T',' ') : order.created_at %></td>
                     <td>
                       <div class="btn-group">
-                        <a href="/order/edit/<%= setting.id %>" class="btn btn-sm btn-warning">✏️ Edit</a>
-                        <form method="POST" action="/order/delete/<%= setting.id %>" style="display:inline;">
-                          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this setting?')">
+                        <a href="/order/edit/<%= order.id %>" class="btn btn-sm btn-warning">✏️ Edit</a>
+                        <form method="POST" action="/order/delete/<%= order.id %>" style="display:inline;">
+                          <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this order?')">
                             Delete
                           </button>
                         </form>
@@ -59,7 +61,7 @@
                 <% }) %>
               <% } else { %>
                 <tr>
-                  <td colspan="5" class="text-center py-4">No settings found</td>
+                  <td colspan="6" class="text-center py-4">No orders found</td>
                 </tr>
               <% } %>
             </tbody>

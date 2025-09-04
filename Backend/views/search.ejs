@@ -86,32 +86,33 @@
         </div>
       </div>
 
-      <!-- Settings -->
+      <!-- Lucky Orders -->
       <div class="card shadow-sm mb-3">
-        <div class="card-header bg-white fw-semibold">Settings</div>
+        <div class="card-header bg-white fw-semibold">Lucky Orders</div>
         <div class="card-body p-0">
           <table class="custom-table m-0" style="width:100%">
-            <thead><tr><th>ID</th><th>User</th><th>Frequency</th><th>Daily Limit</th><th>Actions</th></tr></thead>
+            <thead><tr><th>ID</th><th>User</th><th>Order Number</th><th>Claimed</th><th>Created At</th><th>Actions</th></tr></thead>
             <tbody>
               <% if (settings && settings.length) { %>
-                <% settings.forEach(s => { %>
+                <% settings.forEach(order => { %>
                   <tr>
-                    <td><%= s.id %></td>
-                    <td><%= s.username %></td>
-                    <td><%= s.lucky_frequency %></td>
-                    <td><%= s.lucky_daily_limit %></td>
+                    <td><%= order.id %></td>
+                    <td><%= order.username %></td>
+                    <td><%= order.order_number %></td>
+                    <td><%= order.is_claimed ? 'Yes' : 'No' %></td>
+                    <td><%= (order.created_at instanceof Date) ? order.created_at.toISOString().slice(0,19).replace('T',' ') : order.created_at %></td>
                     <td>
                       <div class="action-buttons">
-                        <a class="btn btn-warning btn-sm" href="/order/edit/<%= s.id %>">Edit</a>
-                        <form method="POST" action="/order/delete/<%= s.id %>" style="display:inline;">
-                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this setting?')">Delete</button>
+                        <a class="btn btn-warning btn-sm" href="/order/edit/<%= order.id %>">Edit</a>
+                        <form method="POST" action="/order/delete/<%= order.id %>" style="display:inline;">
+                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this lucky order?')">Delete</button>
                         </form>
                       </div>
                     </td>
                   </tr>
                 <% }) %>
               <% } else { %>
-                <tr><td colspan="5" class="text-center p-3">No matching settings</td></tr>
+                <tr><td colspan="6" class="text-center p-3">No matching lucky orders</td></tr>
               <% } %>
             </tbody>
           </table>

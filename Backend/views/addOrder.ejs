@@ -147,42 +147,35 @@
                 </option>
               <% }) %>
             </select>
-            <div class="help-text">Select the user for these order settings</div>
+            <div class="help-text">Select the user for this lucky order</div>
           </div>
-          
+
           <div class="form-group">
-            <label class="form-label">Lucky Frequency:</label>
+            <label class="form-label">Order Number:</label>
             <input 
               type="number" 
-              name="lucky_frequency" 
+              name="order_number" 
               class="form-control" 
               required
               min="1"
               step="1"
-              placeholder="Enter frequency number"
-              oninput="validatePositiveNumber(this)"
+              placeholder="Enter order number"
             >
-            <div class="help-text">The frequency of lucky orders (must be positive)</div>
+            <div class="help-text">The lucky order number (must be positive)</div>
           </div>
-          
+
           <div class="form-group">
-            <label class="form-label">Lucky Daily Limit:</label>
-            <input 
-              type="number" 
-              name="lucky_daily_limit" 
-              class="form-control" 
-              required
-              min="1"
-              step="1"
-              placeholder="Enter daily limit"
-              oninput="validatePositiveNumber(this)"
-            >
-            <div class="help-text">Maximum lucky orders per day (must be positive)</div>
+            <label class="form-label">Is Claimed?</label>
+            <select name="is_claimed" class="form-select" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+            <div class="help-text">Has this lucky order been claimed?</div>
           </div>
-          
+
           <div class="form-actions">
             <button type="submit" class="btn-success">
-              <i class="fas fa-plus-circle"></i> Create Setting
+              <i class="fas fa-plus-circle"></i> Create Lucky Order
             </button>
             <a href="/order" class="btn-secondary">
               <i class="fas fa-arrow-left"></i> Back to Orders
@@ -210,23 +203,20 @@
     }
 
     document.querySelector('form').addEventListener('submit', function(e) {
-      const frequency = document.querySelector('input[name="lucky_frequency"]');
-      const dailyLimit = document.querySelector('input[name="lucky_daily_limit"]');
+      const orderNumber = document.querySelector('input[name="order_number"]');
       const userId = document.querySelector('select[name="user_id"]');
-      
       if (!userId.value) {
         e.preventDefault();
         alert('Please select a user');
         userId.focus();
         return false;
       }
-      
-      if (frequency.value < 1 || dailyLimit.value < 1) {
+      if (orderNumber.value < 1) {
         e.preventDefault();
-        alert('Frequency and daily limit must be at least 1');
+        alert('Order number must be at least 1');
+        orderNumber.focus();
         return false;
       }
-      
       return true;
     });
   </script>

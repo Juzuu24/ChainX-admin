@@ -129,49 +129,43 @@
       </div>
       
       <div class="form-container">
-        <form method="POST" action="/order/edit/<%= setting.id %>">
+        <form method="POST" action="/order/edit/<%= order.id %>">
           <div class="form-group">
             <label class="form-label">User:</label>
             <select name="user_id" class="form-select" required>
               <% users.forEach(user => { %>
-                <option value="<%= user.id %>" <%= setting.user_id == user.id ? 'selected' : '' %>>
+                <option value="<%= user.id %>" <%= order.user_id == user.id ? 'selected' : '' %>>
                   <%= user.username %> (ID: <%= user.id %>)
                 </option>
               <% }) %>
             </select>
           </div>
-          
+
           <div class="form-group">
-            <label class="form-label">Lucky Frequency:</label>
+            <label class="form-label">Order Number:</label>
             <input 
               type="number" 
-              name="lucky_frequency" 
+              name="order_number" 
               class="form-control" 
-              value="<%= setting.lucky_frequency %>" 
+              value="<%= order.order_number %>" 
               required
-              min="0"
+              min="1"
               step="1"
-              placeholder="Enter frequency number"
+              placeholder="Enter order number"
             >
           </div>
-          
+
           <div class="form-group">
-            <label class="form-label">Lucky Daily Limit:</label>
-            <input 
-              type="number" 
-              name="lucky_daily_limit" 
-              class="form-control" 
-              value="<%= setting.lucky_daily_limit %>" 
-              required
-              min="0"
-              step="1"
-              placeholder="Enter daily limit"
-            >
+            <label class="form-label">Is Claimed?</label>
+            <select name="is_claimed" class="form-select" required>
+              <option value="0" <%= order.is_claimed == 0 ? 'selected' : '' %>>No</option>
+              <option value="1" <%= order.is_claimed == 1 ? 'selected' : '' %>>Yes</option>
+            </select>
           </div>
-          
+
           <div class="form-actions">
             <button type="submit" class="btn-primary">
-              <i class="fas fa-save"></i> Update Setting
+              <i class="fas fa-save"></i> Update Lucky Order
             </button>
             <a href="/order" class="btn-secondary">
               <i class="fas fa-arrow-left"></i> Back to Orders

@@ -90,23 +90,20 @@ Router.get('/search', async (req, res) => {
         : [like, like,          prefix, like, prefix, like, PAGE_SIZE, OFFSET]
     );
 
-    // --- Settings (user_settings + signUp) ---
+    // --- Lucky Orders (lucky_orders + signUp) ---
+    // If query is a number, only match id or user_id or order_number
     const settings = await query(
       `
-      SELECT us.id, us.user_id, s.username, us.lucky_frequency, us.lucky_daily_limit
-      FROM user_settings us
-      JOIN signUp s ON s.id = us.user_id
-      WHERE s.username LIKE ? ${isNum ? 'OR us.id = ? OR us.user_id = ?' : ''}
-      ORDER BY
-        CASE WHEN s.username LIKE ? THEN 2
-             WHEN s.username LIKE ? THEN 1
-             ELSE 0 END DESC,
-        us.id DESC
+      SELECT lo.id, lo.user_id, s.username, lo.order_number, lo.is_claimed, lo.created_at
+      FROM lucky_orders lo
+      JOIN signUp s ON s.id = lo.user_id
+      WHERE ${isNum ? 'lo.id = ? OR lo.user_id = ? OR lo.order_number = ?' : 's.username LIKE ?'}
+      ORDER BY lo.created_at DESC
       LIMIT ? OFFSET ?
       `,
       isNum
-        ? [like, num, num, prefix, like, PAGE_SIZE, OFFSET]
-        : [like,          prefix, like, PAGE_SIZE, OFFSET]
+        ? [num, num, num, PAGE_SIZE, OFFSET]
+        : [like, PAGE_SIZE, OFFSET]
     );
 
     return res.render('search', {
@@ -423,18 +420,20 @@ Router.get("/deposits/delete/:deposit_id", (req, res) => {
 });
 
 ///Lucky Order
-// View all settings
+
+// View all lucky orders
 Router.get('/order', (req, res) => {
   mysqlConnection.query(`
-    SELECT us.*, s.username
-    FROM user_settings us
-    JOIN signUp s ON us.user_id = s.id
+    SELECT lo.*, s.username
+    FROM lucky_orders lo
+    JOIN signUp s ON lo.user_id = s.id
+    ORDER BY lo.created_at DESC
   `, (err, results) => {
     if (!err) {
-      res.render('order', { title: 'User Settings', settings: results });
+      res.render('order', { title: 'Lucky Orders', orders: results });
     } else {
       console.error(err);
-      res.status(500).send('Error loading settings');
+      res.status(500).send('Error loading lucky orders');
     }
   });
 });
@@ -443,26 +442,26 @@ Router.get('/order', (req, res) => {
 Router.get('/order/add', (req, res) => {
   mysqlConnection.query(`SELECT id, username FROM signUp`, (err, users) => {
     if (!err) {
-      res.render('addOrder', { title: 'Add Setting', users });
+      res.render('addOrder', { title: 'Add Lucky Order', users });
     } else {
       res.status(500).send('Error loading users');
     }
   });
 });
 
-// Add setting
+// Add lucky order
 Router.post('/order/add', (req, res) => {
-  const { user_id, lucky_frequency, lucky_daily_limit } = req.body;
+  const { user_id, order_number, is_claimed } = req.body;
   const sql = `
-    INSERT INTO user_settings (user_id, lucky_frequency, lucky_daily_limit)
+    INSERT INTO lucky_orders (user_id, order_number, is_claimed)
     VALUES (?, ?, ?)
   `;
-  mysqlConnection.query(sql, [user_id, lucky_frequency, lucky_daily_limit], (err) => {
+  mysqlConnection.query(sql, [user_id, order_number, is_claimed ? 1 : 0], (err) => {
     if (!err) {
       res.redirect('/order');
     } else {
       console.error(err);
-      res.status(500).send('Error adding setting');
+      res.status(500).send('Error adding lucky order');
     }
   });
 });
@@ -470,11 +469,11 @@ Router.post('/order/add', (req, res) => {
 // Edit form
 Router.get('/order/edit/:id', (req, res) => {
   const id = req.params.id;
-  mysqlConnection.query(`SELECT * FROM user_settings WHERE id = ?`, [id], (err, settingResult) => {
-    if (err || settingResult.length === 0) return res.status(404).send('Setting not found');
+  mysqlConnection.query(`SELECT * FROM lucky_orders WHERE id = ?`, [id], (err, orderResult) => {
+    if (err || orderResult.length === 0) return res.status(404).send('Lucky order not found');
     mysqlConnection.query(`SELECT id, username FROM signUp`, (err2, users) => {
       if (!err2) {
-        res.render('editOrder', { title: 'Edit Setting', setting: settingResult[0], users });
+        res.render('editOrder', { title: 'Edit Lucky Order', order: orderResult[0], users });
       } else {
         res.status(500).send('Error loading users');
       }
@@ -482,34 +481,34 @@ Router.get('/order/edit/:id', (req, res) => {
   });
 });
 
-// Update
+// Update lucky order
 Router.post('/order/edit/:id', (req, res) => {
-  const { user_id, lucky_frequency, lucky_daily_limit } = req.body;
+  const { user_id, order_number, is_claimed } = req.body;
   const id = req.params.id;
   const sql = `
-    UPDATE user_settings
-    SET user_id = ?, lucky_frequency = ?, lucky_daily_limit = ?
+    UPDATE lucky_orders
+    SET user_id = ?, order_number = ?, is_claimed = ?
     WHERE id = ?
   `;
-  mysqlConnection.query(sql, [user_id, lucky_frequency, lucky_daily_limit, id], (err) => {
+  mysqlConnection.query(sql, [user_id, order_number, is_claimed ? 1 : 0, id], (err) => {
     if (!err) {
       res.redirect('/order');
     } else {
       console.error(err);
-      res.status(500).send('Error updating setting');
+      res.status(500).send('Error updating lucky order');
     }
   });
 });
 
-// Delete
+// Delete lucky order
 Router.post('/order/delete/:id', (req, res) => {
   const id = req.params.id;
-  mysqlConnection.query(`DELETE FROM user_settings WHERE id = ?`, [id], (err) => {
+  mysqlConnection.query(`DELETE FROM lucky_orders WHERE id = ?`, [id], (err) => {
     if (!err) {
       res.redirect('/order');
     } else {
       console.error(err);
-      res.status(500).send('Error deleting setting');
+      res.status(500).send('Error deleting lucky order');
     }
   });
 });
