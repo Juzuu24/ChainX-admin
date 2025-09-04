@@ -45,12 +45,12 @@ Router.get('/search', async (req, res) => {
 
   try {
     // --- Users (signUp) ---
-    // Add more columns: password_hash, vip_status, credit_score, created_at
+    // If query is a number, only match id
     const users = await query(
       `
       SELECT id, username, email, phone_number, COALESCE(balance,0) AS balance, password_hash, vip_status, credit_score, created_at
       FROM signUp
-      WHERE username LIKE ? OR username LIKE ? OR email LIKE ? OR phone_number LIKE ? ${isNum ? 'OR id = ?' : ''}
+      WHERE ${isNum ? 'id = ?' : 'username LIKE ? OR username LIKE ? OR email LIKE ? OR phone_number LIKE ?'}
       ORDER BY
         CASE WHEN username LIKE ? THEN 2
              WHEN username LIKE ? THEN 1
@@ -59,7 +59,7 @@ Router.get('/search', async (req, res) => {
       LIMIT ? OFFSET ?
       `,
       isNum
-        ? [prefix, like, like, like, num, prefix, like, PAGE_SIZE, OFFSET]
+        ? [num, prefix, like, PAGE_SIZE, OFFSET]
         : [prefix, like, like, like,         prefix, like, PAGE_SIZE, OFFSET]
     );
 
@@ -67,7 +67,7 @@ Router.get('/search', async (req, res) => {
   const deposits = [];
 
     // --- Withdrawals (withdrawals + signUp) ---
-    // Add more columns: status, holderName, phoneNumber, cryptoId
+    // If query is a number, only match withdraw_id or user_id
     const withdrawals = await query(
       `
       SELECT w.withdraw_id,
@@ -76,8 +76,7 @@ Router.get('/search', async (req, res) => {
              w.amount, w.method, w.created_at, w.status, w.holderName, w.phoneNumber, w.cryptoId
       FROM withdrawals w
       LEFT JOIN signUp s ON s.id = w.id
-      WHERE s.username LIKE ? OR w.method LIKE ?
-            ${isNum ? 'OR w.withdraw_id = ? OR w.id = ? OR w.amount = ?' : ''}
+      WHERE ${isNum ? 'w.withdraw_id = ? OR w.id = ?' : 's.username LIKE ? OR w.method LIKE ?'}
       ORDER BY
         GREATEST(
           CASE WHEN s.username LIKE ? THEN 2 WHEN s.username LIKE ? THEN 1 ELSE 0 END,
@@ -87,7 +86,7 @@ Router.get('/search', async (req, res) => {
       LIMIT ? OFFSET ?
       `,
       isNum
-        ? [like, like, num, num, num, prefix, like, prefix, like, PAGE_SIZE, OFFSET]
+        ? [num, num, prefix, like, prefix, like, PAGE_SIZE, OFFSET]
         : [like, like,          prefix, like, prefix, like, PAGE_SIZE, OFFSET]
     );
 
