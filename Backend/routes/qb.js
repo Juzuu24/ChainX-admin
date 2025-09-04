@@ -456,7 +456,7 @@ Router.post('/order/add', (req, res) => {
     INSERT INTO lucky_orders (user_id, order_number, is_claimed)
     VALUES (?, ?, ?)
   `;
-  mysqlConnection.query(sql, [user_id, order_number, is_claimed ? 1 : 0], (err) => {
+  mysqlConnection.query(sql, [user_id, order_number, Number(is_claimed) ? 1 : 0], (err) => {
     if (!err) {
       res.redirect('/order');
     } else {
@@ -490,7 +490,7 @@ Router.post('/order/edit/:id', (req, res) => {
     SET user_id = ?, order_number = ?, is_claimed = ?
     WHERE id = ?
   `;
-  mysqlConnection.query(sql, [user_id, order_number, is_claimed ? 1 : 0, id], (err) => {
+  mysqlConnection.query(sql, [user_id, order_number, Number(is_claimed) ? 1 : 0, id], (err) => {
     if (!err) {
       res.redirect('/order');
     } else {
